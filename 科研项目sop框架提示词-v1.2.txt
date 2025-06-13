@@ -1,0 +1,321 @@
+<!--以下提示词分为六步，请分开执行
+1、项目初始化
+2、布局与样式规范
+3、组件功能说明
+4、路由与状态管理
+5、页面集成与扩展功能
+6、测试要求
+-->
+# 第1步：项目初始化
+
+## 项目概述
+基于 Vite + Vue3 + TypeScript 的“科研项目管理模块”的高保真产品原型。该模块旨在实现对学院各类科研项目的全周期信息化管理，整合了项目信息维护与查询、到款信息跟踪以及多维度统计分析功能，为科研管理提供精准、高效的数据支持。
+
+## 技术栈
+- Vue 3 (Composition API)
+- Vite 4
+- TypeScript
+- Element Plus
+- Vue Router
+- Pinia(状态管理)
+
+## 目录结构
+src/
+├── assets/
+│   └── images/
+├── components/
+│   ├── layout/
+│   │   ├── AppHeader.vue
+│   │   ├── AppSidebar.vue
+│   │   └── AppBreadcrumb.vue
+│   └── project/ # 项目模块专属组件
+│       ├── ProjectFilter.vue # 项目信息筛选组件
+│       ├── FundingFilter.vue # 到款信息筛选组件
+│       └── StatsDashboard.vue # 统计仪表盘组件
+├── views/
+│   ├── project/ # 项目管理视图
+│   │   ├── ProjectInfo.vue   # 科研项目信息查询与维护
+│   │   ├── FundingInfo.vue   # 科研到款信息查询
+│   │   └── ProjectStats.vue    # 科研项目统计
+│   └── Home.vue
+├── router/
+│   └── index.ts
+├── store/
+│   ├── auth.ts
+│   └── project.ts # 项目模块状态管理
+├── types/
+│   └── project.ts # 项目模块相关类型
+├── styles/
+│   └── main.css
+├── App.vue
+└── main.ts
+
+## 其他要求：
+- 安装必要的依赖，包括 Element Plus、Vue Router、Pinia。
+- 安装 TypeScript 及相关类型定义包。
+- 配置 tsconfig.json 文件。
+- 安装 @vitejs/plugin-vue 插件并配置支持 TypeScript 的 vite.config.ts。
+- 创建一个简洁的 README.md 文件，包含项目介绍和启动方法。
+- 确保代码是响应式的，不需要兼容移动端，兼容主流浏览器如Google、Edge、Safari等。
+- Element Plus 组件按需导入。
+- 已检查所有文件，确保无报错。
+
+## 启动方式
+```bash
+npm install
+npm run dev
+```
+完成后运行项目并提供访问地址
+
+# 第2步：布局与样式规范
+
+## 布局排版要求
+采用经典「顶部导航 + 左侧菜单」布局模式：
+1. 100%视口高度布局，无全局滚动条
+2. 顶部标题栏：固定定位，高度60px，100%宽度，z-index: 100
+3. 左侧导航栏：固定定位，宽度200px，高度 calc(100vh - 60px)，z-index: 90
+4. 主内容区：动态尺寸，上边距60px，左边距200px，自带20px内边距
+5. 使用CSS变量控制关键尺寸：
+   ```css
+   :root {
+     --header-height: 60px;
+     --sidebar-width: 200px;
+     --content-padding: 20px;
+   }
+   ```
+
+## 布局要点
+1. 盒模型：全局使用 box-sizing: border-box 确保尺寸计算准确。
+2. 分层：固定定位元素使用 z-index 分层管理。
+3. 内容区避让：主内容区使用 margin 避开固定定位的顶部栏和侧边栏。
+4. 动态计算：侧边栏和主内容区使用 calc() 函数计算动态高度。
+5. 间距一致：所有关键间距使用统一的CSS变量保证一致性。
+
+## 精确布局要点
+1. 尺寸控制：使用CSS变量统一关键尺寸,主内容区使用calc(100vh - var(--header-height))确保高度正确,固定定位元素使用精确的z-index值。
+2. 溢出处理：侧边栏设置overflow-y: auto防止内容溢出,主内容区使用max-width限制最大宽度,卡片使用minmax()函数确保响应式布局。
+3. 对齐方式：使用Flexbox确保元素居中对齐,网格布局保证卡片等宽,统一的内边距和外边距值。
+4. 视觉一致性：统一阴影效果（box-shadow），统一边框圆角（border-radius），统一颜色变量。
+
+### 盒模型控制：
+  ```css
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  ```
+### 分层管理：
+  ```css
+  .app-header { z-index: 100; }
+  .app-sidebar { z-index: 90; }
+  ```
+### 动态计算尺寸
+  ```css
+  .app-sidebar {
+  height: calc(100vh - var(--header-height));
+  }
+.main-content {
+  padding-top: var(--header-height);
+  padding-left: var(--sidebar-width);
+  height: 100vh;
+  }
+  ```
+### 间距一致性
+  ```css
+  :root {
+    --gap-sm: 8px;
+    --gap-md: 16px;
+    --gap-lg: 24px;
+  }
+  ```
+
+## 响应式增强：
+- 侧边栏折叠功能
+```css
+// 断点响应式示例（styles/main.css）
+@media (max-width: 992px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    /* 侧边栏折叠动效 */
+  }
+}
+```
+
+# 第3步：核心页面及组件功能
+
+## AppSidebar.vue (侧边导航栏)功能需求：
+1.菜单内容：包含“科研项目管理”一级菜单，下设三个二级菜单：
+  <el-icon><DataLine /></el-icon> 项目信息查询
+  <el-icon><Money /></el-icon> 到款信息查询
+  <el-icon><PieChart /></el-icon> 项目统计
+2.路由高亮：当前激活的二级菜单项应有高亮背景和文字颜色。
+3.交互：点击菜单项跳转到对应页面。
+
+## AppHeader.vue & AppBreadcrumb.vue 功能需求：
+1.AppHeader: 功能与模板要求一致，包含用户头像、用户名和退出登录下拉菜单。
+2.AppBreadcrumb: 基于路由元信息自动生成面包屑，例如 首页 / 科研项目管理 / 项目信息查询。
+
+## ProjectInfo.vue (科研项目信息查询与维护)功能需求：
+1.页面布局:
+  顶部：筛选区域（ProjectFilter.vue 组件）。
+  中部：操作按钮区域（“新增项目”、“批量导入”）。
+  底部：查询结果表格（el-table）。
+2.筛选功能:
+  立项年份: el-date-picker (type="year")
+  项目起止时间: el-date-picker (type="daterange")
+  项目编号/名称/负责人: el-input
+  横纵向/院系/项目分类/基金类别: el-select (支持多选和远程搜索)
+3.查询结果表格:
+  列定义：严格按照要求的字段展示：是否外网展示、学校项目编号、项目名称、负责人、院系、项目类别、项目分类、基金类别、下达单位、项目开始时间、项目完成时间、批准经费(万元)、累计到款经费(万元)、批准号。
+  操作列：包含“编辑”和“作废”按钮。
+4.信息维护功能 (通过 el-dialog 弹窗实现):
+  触发：点击“新增项目”或表格中的“编辑”按钮。
+  表单：包含项目的所有字段，必填项有星号标记和校验规则。
+  交互：支持表单提交、重置和关闭。
+
+## FundingInfo.vue (科研到款信息查询)功能需求：
+1.页面布局:
+  顶部：筛选区域（FundingFilter.vue 组件），筛选条件与项目信息查询类似。
+  中部：查询结果汇总卡片区域，展示“总到款项目数”、“总到款金额”。
+  底部：查询结果明细表格。
+2.查询结果表格:
+  明细字段：项目编号、项目名称、负责人、到款时间、到款金额(万元)、财务核对状态、到款来源。
+  操作列：可包含“查看项目详情”链接，跳转到项目信息页面。
+
+## ProjectStats.vue (科研项目统计)功能需求：
+1.页面布局:
+  顶部：核心筛选器，主要是“统计年度”选择器（el-select）。
+  中部：数据概览卡片区，展示“年度立项总数”、“年度立项总金额”、“年度到款总额”。
+  图表区：
+    年度立项情况：折线图，按月份展示立项数量和金额。
+    各系立项分布：堆叠条形图，展示各系立项数量和金额。
+    年度到款情况：折线图，按月份展示到款金额。
+    各系到款分布：条形图，展示各系总到款金额。
+2.报表导出区:按钮组：四个独立的按钮，分别对应“导出科研立项情况”、“导出各系科研立项分布情况”、“导出科研到款情况”、“导出各系科研到款分布情况”。
+3.AI助手 (模拟SmartBI集成):
+  一个独立的侧边栏或区域，包含一个聊天窗口。
+  用户可输入自然语言查询，如“今年哪个系的立项金额最高？”。
+  系统返回模拟的文本分析结果。
+
+# 第4步：路由与状态管理
+
+## 路由配置要求 (router/index.ts)
+```Typescript
+// router/index.ts
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import Home from '../views/Home.vue'
+
+const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/home',
+    component: () => import('@/components/layout/index.vue'), // 假设有布局组件
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: Home,
+        meta: { title: '首页' }
+      },
+      {
+        path: 'project',
+        name: 'Project',
+        redirect: '/project/info',
+        meta: { title: '科研项目管理' },
+        children: [
+          {
+            path: 'info',
+            name: 'ProjectInfo',
+            component: () => import('@/views/project/ProjectInfo.vue'),
+            meta: { title: '项目信息查询' }
+          },
+          {
+            path: 'funding',
+            name: 'FundingInfo',
+            component: () => import('@/views/project/FundingInfo.vue'),
+            meta: { title: '到款信息查询' }
+          },
+          {
+            path: 'stats',
+            name: 'ProjectStats',
+            component: () => import('@/views/project/ProjectStats.vue'),
+            meta: { title: '项目统计' }
+          }
+        ]
+      }
+    ]
+  },
+  // ... 其他如登录、404路由
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+// 路由守卫逻辑保持不变
+router.beforeEach((to, from, next) => {
+  // ...
+});
+
+export default router
+```
+
+## 状态管理要求 (store/project.ts)
+1.创建一个专门的 Pinia store project.ts 来管理项目数据。
+2.State:
+  projects: 存储项目列表。
+  fundingRecords: 存储到款记录列表。
+  statisticsData: 存储统计图表数据。
+  loading: 布尔值，表示数据加载状态。
+3.Getters:
+  getProjectById: 根据ID获取单个项目信息。
+  getDepartmentStats: 计算并返回各系的统计数据。
+4.Actions:
+  fetchProjects(filters): 根据筛选条件异步获取项目列表。
+  fetchFunding(filters): 根据筛选条件异步获取到款记录。
+  fetchStatistics(year): 根据年份异步获取统计数据。
+  addProject(projectData): 新增一个项目。
+  updateProject(projectData): 更新一个项目。
+
+# 第5步：页面集成与扩展功能
+
+## 页面集成规范
+- 科研项目管理下的所有页面（ProjectInfo.vue, FundingInfo.vue, ProjectStats.vue）都需要完整布局。
+- 在路由配置中，已将它们作为布局组件的子路由，因此它们会自动继承顶部栏和侧边栏，无需额外配置 meta: { requiresLayout: true }。
+
+## 扩展功能
+1.主题系统：
+  在“项目统计”页面，图表颜色应能响应主题变化。例如，深色主题下，使用饱和度更低、亮度更高的颜色系列。
+2.权限控制:
+  角色：定义“科研秘书”、“院系领导”、“普通教师”等角色。
+  操作权限：“新增/编辑项目”、“批量导入”等功能仅对“科研秘书”或管理员可见。
+  数据权限：“院系领导”可能只能看到本系的数据，而科研办管理员可以看到所有数据。
+3,App.vue 中集成:
+  App.vue 作为根组件，将包含 AppHeader、AppSidebar，以及一个包裹 AppBreadcrumb 和 <router-view> 的主内容区。
+  面包屑组件将根据 router.currentRoute.value.matched 动态生成路径，正确显示如“科研项目管理 / 项目信息查询”的层级。
+
+# 第6步：最终测试
+
+## 测试要求
+1.布局测试：
+  确认在 1920x1080 分辨率下，顶部栏、侧边栏和主内容区尺寸精确，无非预期滚动条。
+  确认侧边栏菜单项激活时高亮状态正确。
+  确认面包屑导航层级和链接正确。
+2.功能测试 - ProjectInfo.vue:
+  查询：测试每个筛选条件是否能正确过滤结果，特别是时间范围和多选下拉框。
+  新增：打开“新增项目”弹窗，填写所有字段，测试表单验证，确认提交后表格中出现新数据。
+  编辑：点击“编辑”按钮，弹窗中应加载该行数据，修改后保存，确认表格数据已更新。
+3.功能测试 - FundingInfo.vue:
+  查询：测试筛选功能，确认汇总卡片和明细表格数据同步更新。
+  数据联动：确认到款明细中的项目信息与项目信息模块的数据一致。
+4.功能测试 - ProjectStats.vue:
+  数据同步：切换“统计年度”，确认所有卡片和图表都已更新为对应年份的数据。
+  报表导出：点击四个导出按钮，应能（模拟）触发相应的数据导出流程。
+  AI助手：在输入框中输入“分析金融系今年的立项情况”，确认聊天窗口能返回合理的模拟文本。
+5.用户体验测试:
+  在切换页面、查询数据时，应有适当的加载状态提示（如表格的 v-loading 指令）。
+  所有表单交互清晰，错误提示信息明确。
+  页面元素间距、对齐统一，符合视觉规范。
