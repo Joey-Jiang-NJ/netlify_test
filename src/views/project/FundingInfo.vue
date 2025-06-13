@@ -81,8 +81,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Upload, UploadFilled } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
 import FundingFilter from '../../components/project/FundingFilter.vue';
 import { useProjectStore } from '../../store/project';
 import type { Project } from '../../types/project';
