@@ -26,6 +26,29 @@
           <span>项目统计</span>
         </el-menu-item>
       </el-sub-menu>
+
+      <el-sub-menu index="/publication">
+        <template #title>
+          <el-icon><Document /></el-icon>
+          <span>论文专著管理</span>
+        </template>
+        <el-menu-item index="/publication/info">
+          <el-icon><Files /></el-icon>
+          <span>论文专著信息</span>
+        </el-menu-item>
+        <el-menu-item index="/publication/accepted">
+          <el-icon><Check /></el-icon>
+          <span>已录用论文</span>
+        </el-menu-item>
+        <el-menu-item index="/publication/benchmark">
+          <el-icon><Star /></el-icon>
+          <span>标杆期刊</span>
+        </el-menu-item>
+        <el-menu-item index="/publication/stats">
+          <el-icon><TrendCharts /></el-icon>
+          <span>成果统计</span>
+        </el-menu-item>
+      </el-sub-menu>
     </el-menu>
   </aside>
 </template>
@@ -35,7 +58,12 @@ import {
   DataLine,
   Money,
   PieChart,
-  Menu
+  Menu,
+  Document,
+  Files,
+  Check,
+  Star,
+  TrendCharts
 } from '@element-plus/icons-vue'
 </script>
 

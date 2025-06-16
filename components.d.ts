@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AchievementStats: typeof import('./src/components/publication/AchievementStats.vue')['default']
     AppBreadcrumb: typeof import('./src/components/layout/AppBreadcrumb.vue')['default']
     AppHeader: typeof import('./src/components/layout/AppHeader.vue')['default']
     AppSidebar: typeof import('./src/components/layout/AppSidebar.vue')['default']
@@ -39,13 +40,21 @@ declare module 'vue' {
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FundingFilter: typeof import('./src/components/project/FundingFilter.vue')['default']
+    JournalDirectory: typeof import('./src/components/publication/JournalDirectory.vue')['default']
     Layout: typeof import('./src/components/layout/index.vue')['default']
     ProjectFilter: typeof import('./src/components/project/ProjectFilter.vue')['default']
+    PublicationFilter: typeof import('./src/components/publication/PublicationFilter.vue')['default']
+    PublicationForm: typeof import('./src/components/publication/PublicationForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StatsDashboard: typeof import('./src/components/project/StatsDashboard.vue')['default']
+  }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

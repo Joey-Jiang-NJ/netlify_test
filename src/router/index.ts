@@ -41,6 +41,38 @@ const routes: Array<RouteRecordRaw> = [
             meta: { title: '项目统计' }
           }
         ]
+      },
+      {
+        path: 'publication',
+        name: 'Publication',
+        redirect: '/publication/info',
+        meta: { title: '论文专著管理' },
+        children: [
+          {
+            path: 'info',
+            name: 'PublicationInfo',
+            component: () => import('../views/publication/PublicationInfo.vue'),
+            meta: { title: '论文专著信息' }
+          },
+          {
+            path: 'accepted',
+            name: 'AcceptedPapers',
+            component: () => import('../views/publication/AcceptedPapers.vue'),
+            meta: { title: '已录用论文' }
+          },
+          {
+            path: 'benchmark',
+            name: 'BenchmarkJournals',
+            component: () => import('../views/publication/BenchmarkJournals.vue'),
+            meta: { title: '标杆期刊' }
+          },
+          {
+            path: 'stats',
+            name: 'PublicationStats',
+            component: () => import('../views/publication/AchievementStats.vue'),
+            meta: { title: '成果统计' }
+          }
+        ]
       }
     ]
   },
