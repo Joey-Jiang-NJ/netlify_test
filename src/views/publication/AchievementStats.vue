@@ -58,7 +58,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Bar, Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,

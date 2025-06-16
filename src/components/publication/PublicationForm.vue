@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRefs, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import type { PropType } from 'vue';
 import type { UnifiedPublication } from '@/types/publication';
 
